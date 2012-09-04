@@ -268,12 +268,12 @@ class nginx (
   $bool_debug=any2bool($debug)
   $bool_audit_only=any2bool($audit_only)
 
-  $gzip = $gzip ? {
-    'off'     => 'off',
-    'OFF'     => 'off',
-    'ON'      => 'on',
-    default   => 'on',
-  }
+  #$gzip = $gzip ? {
+  #  'off'     => 'off',
+  #  'OFF'     => 'off',
+  #  'ON'      => 'on',
+  #  default   => 'on',
+  #}
 
   ### Calculation of variables that dependes on arguments
   $vdir = $::operatingsystem ? {
