@@ -149,9 +149,16 @@
 # [*keepalive_timeout*]
 #   Specified keepalive timeout. Default is 65(ms).
 #
+# [*server_names_hash_bucket_size*]
+#   Specified the server_names_hash_bucket_size. Default is 64
+#   Increase this to powers of 2 if you are getting related errors
+#
 # [*client_max_body_size*]
 #   Specified the max body size of client. Default is 10mb.
 #   Increase this param if your nginx is an upload server.
+#
+# [*sendfile*]
+#   Activate or deactivate the usage of sendfile. Default is on.
 #
 # [*service_status*]
 #   If the nginx service init script supports status argument
@@ -227,8 +234,10 @@ class nginx (
   $gzip                = params_lookup( 'gzip' ),
   $worker_connections  = params_lookup( 'worker_connections' ),
   $keepalive_timeout   = params_lookup( 'keepalive_timeout' ),
+  $server_names_hash_bucket_size  = params_lookup( 'server_names_hash_bucket_size' ),
   $client_max_body_size  = params_lookup( 'client_max_body_size' ),
   $types_hash_max_size = params_lookup( 'types_hash_max_size' ),
+  $sendfile            = params_lookup( 'sendfile' ),
   $my_class            = params_lookup( 'my_class' ),
   $source              = params_lookup( 'source' ),
   $source_dir          = params_lookup( 'source_dir' ),
@@ -271,7 +280,6 @@ class nginx (
   $log_file            = params_lookup( 'log_file' ),
   $port                = params_lookup( 'port' ),
   $protocol            = params_lookup( 'protocol' ),
-  $disable_default_site = params_lookup( 'disable_default_site' )
   ) inherits nginx::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
@@ -301,6 +309,11 @@ class nginx (
   $vdir = $::operatingsystem ? {
     /(?i:Ubuntu|Debian|Mint)/ => "${nginx::config_dir}/sites-available",
     default                   => "${nginx::config_dir}/conf.d",
+  }
+
+  $vdir_enable = $::operatingsystem ? {
+    /(?i:Ubuntu|Debian|Mint)/ => "${nginx::config_dir}/sites-enabled",
+    default                   => undef,
   }
 
   ### Definition of some variables used in the module
@@ -417,12 +430,25 @@ class nginx (
     }
   }
 
+  # Purge default vhost configuration
   if $nginx::config_file_default_purge {
-    file { 'nginx.default.site':
+    $default_site = $::operatingsystem ? {
+      /(?i:Debian|Ubuntu|Mint)/              => [ 'default' ],
+      /(?i:Redhat|Centos|Scientific|Fedora)/ => 'default.conf',
+    }
+
+    file { "${nginx::vdir}/${default_site}":
       ensure  => absent,
-      path    => '/etc/nginx/sites-enabled/default',
-      require => Package['nginx'],
-      notify  => Service['nginx'],
+      require => Package[$nginx::package],
+      notify  => Service[$nginx::service],
+    }
+
+    if $nginx::vdir_enable {
+      file { "${nginx::vdir_enable}/${default_site}":
+        ensure  => absent,
+        require => Package[$nginx::package],
+        notify  => Service[$nginx::service],
+      }
     }
   }
 
@@ -493,17 +519,4 @@ class nginx (
     }
   }
 
-  ### Remove the default nginx conf if it exists
-  if ($nginx::disable_default_site) {
-    $default_site = $::operatingsystem ? {
-      /(?i:Debian|Ubuntu|Mint)/              => "${nginx::config_dir}/sites-enabled/default",
-      /(?i:Redhat|Centos|Scientific|Dedora)/ => "${nginx::config_dir}/conf.d/default.conf",
-    }
-
-    file { $default_site:
-      ensure  => absent,
-      require => Package[$nginx::package],
-      notify  => Service[$nginx::service],
-    }
-  }
 }
