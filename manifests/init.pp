@@ -294,6 +294,10 @@ class nginx (
   $log_file            = params_lookup( 'log_file' ),
   $port                = params_lookup( 'port' ),
   $protocol            = params_lookup( 'protocol' ),
+  $vhost_hash          = params_lookup( 'vhost_hash' ),
+  $resource_location_hash = params_lookup( 'resource_location_hash' ),
+  $resource_upstream_hash = params_lookup( 'resource_upstream_hash' ),
+  $resource_vhost_hash    = params_lookup( 'resource_vhost_hash' ),
   ) inherits nginx::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
@@ -306,6 +310,24 @@ class nginx (
   $bool_firewall=any2bool($firewall)
   $bool_debug=any2bool($debug)
   $bool_audit_only=any2bool($audit_only)
+
+  ## Integration with Hiera
+  if $vhost_hash != {} {
+    validate_hash($vhost_hash)
+    create_resources('nginx::vhost', $vhost_hash)
+  }
+  if $resource_location_hash != {} {
+    validate_hash($resource_location_hash)
+    create_resources('nginx::resource::location', $resource_location_hash)
+  }
+  if $resource_upstream_hash != {} {
+    validate_hash($resource_upstream_hash)
+    create_resources('nginx::resource::upstream', $resource_upstream_hash)
+  }
+  if $resource_vhost_hash != {} {
+    validate_hash($resource_vhost_hash)
+    create_resources('nginx::resource::vhost', $resource_vhost_hash)
+  }
 
   $real_gzip = $gzip ? {
     'off'     => 'off',
