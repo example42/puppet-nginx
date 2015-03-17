@@ -127,7 +127,7 @@ define nginx::resource::vhost(
 
   # Add IPv6 Logic Check - Nginx service will not start if ipv6 is enabled
   # and support does not exist for it in the kernel.
-  if ($bool_ipv6_enable) and ($ipaddress6)  {
+  if ($bool_ipv6_enable) and ($::ipaddress6)  {
     warning('nginx: IPv6 support is not enabled or configured properly')
   }
 

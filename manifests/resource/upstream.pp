@@ -36,9 +36,9 @@ define nginx::resource::upstream (
   }
 
   file { "${nginx::cdir}/${name}-upstream.conf":
-    ensure   => $real_file,
-    content  => template($template_upstream),
-    notify   => $nginx::manage_service_autorestart,
-    require  => Package['nginx'],
+    ensure  => $real_file,
+    content => template($template_upstream),
+    notify  => $nginx::manage_service_autorestart,
+    require => Package['nginx'],
   }
 }

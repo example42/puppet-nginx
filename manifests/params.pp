@@ -128,6 +128,6 @@ class nginx::params {
   $vhost_hash = {}
   $resource_location_hash = {}
   $resource_upstream_hash = {}
-  $resource_vhost_hash    = {}
+  $resource_vhost_hash = {}
   
 }
