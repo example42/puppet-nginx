@@ -1,0 +1,10 @@
+# Virtual host <%= @name %>
+# This file has been provided by puppet for <%= @fqdn %>.
+# DON'T EDIT it manually, any changes will be lost
+#
+
+server {
+  listen <%= @port %>;
+  server_name <%= @serveraliases.join(" ") %>;
+  return <% if @options['status_code'] then -%><%= @options['status_code'] -%><% else %>301<%- end -%> <%= @options['redirect_url'] %>$request_uri;
+}
