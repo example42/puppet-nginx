@@ -7,7 +7,7 @@
 # - The $docroot provides the Documentation Root variable
 # - The $template option specifies whether to use the default template or override
 # - The $priority of the site
-# - The $serveraliases of the site
+# - The $server_aliases of the site
 #
 # Actions:
 # - Install Nginx Virtual Hosts
@@ -27,7 +27,8 @@ define nginx::vhost (
   $port           = '80',
   $template       = 'nginx/vhost/vhost.conf.erb',
   $priority       = '50',
-  $serveraliases  = '',
+  $serveraliases  = undef,
+  $server aliases = '',
   $create_docroot = true,
   $enable         = true,
   $owner          = '',
@@ -48,6 +49,20 @@ define nginx::vhost (
   }
 
   $bool_create_docroot = any2bool($create_docroot)
+
+  # $serveraliases is deprecated
+  if ($serveraliases != undef) {
+    warning('nginx: nginx::vhost serveraliases is deprecated. Please use server_aliases instead.')
+  }
+
+  # convert server_aliases to an array
+  $array_server_aliases = is_array($server_aliases) ? {
+    false => $server_aliases ? {
+      '' => [],
+      default => [$server_aliases],
+    },
+    default => $server_aliases,
+  }
 
   file { "${nginx::vdir}/${priority}-${name}.conf":
     content => template($template),

@@ -1,5 +1,10 @@
   location <%= @location %> {
+<% unless @www_root.nil? || @www_root.empty? -%>
     root  <%= @www_root %>;
+<% end -%>
+<% unless @alias_path.nil? || @alias_path.empty? -%>
+    alias  <%= @alias_path %>;
+<% end -%>
     index <% @index_files.each do |i| %> <%= i %> <% end %>;
 <% unless @auth_basic.nil? || @auth_basic.empty? -%>
     auth_basic <%= @auth_basic  %>;

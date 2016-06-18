@@ -8,3 +8,4 @@ proxy_buffers           <%= scope.lookupvar('nginx::params::nx_proxy_buffers') %
 <% scope.lookupvar('nginx::params::nx_proxy_set_header').each do |header| %>
 proxy_set_header        <%= header %>;
 <% end %>
+<% unless @nx_proxy_http_version.nil? || @nx_proxy_http_version.empty? -%>proxy_http_version      <%= scope.lookupvar('nginx::params::nx_proxy_http_version') %>;<% end %>
