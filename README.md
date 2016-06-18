@@ -117,6 +117,31 @@ For detailed info about the logic and usage patterns of Example42 modules read R
           my_class => 'nginx::example42',
         }
 
+## USAGE - Hiera Support
+* Manage nginx configuration using Hiera
+
+```yaml
+nginx::template: 'modules/nginx/nginx.conf.erb'
+nginx::options:
+  client_header_timeout: '60s'
+  client_body_timeout: '60s'
+  send_timeout: '60s'
+  fastcgi_read_timeout: '60s'
+```
+
+* Defining Nginx resources using Hiera
+
+```yaml
+nginx::vhost_hash:
+  'mysite.com':
+    docroot: '/var/www/mysite.com'
+    create_docroot: true
+nginx::resource_upstream_hash:
+  'proxypass':
+    members:
+      - localhost:3000
+      - localhost:3001
+```
 
 ## USAGE - Example42 extensions management
 * Activate puppi (recommended, but disabled by default)

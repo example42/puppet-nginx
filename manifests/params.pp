@@ -125,5 +125,9 @@ class nginx::params {
   $puppi_helper = 'standard'
   $debug = false
   $audit_only = false
-
+  $vhost_hash = {}
+  $resource_location_hash = {}
+  $resource_upstream_hash = {}
+  $resource_vhost_hash = {}
+  
 }
