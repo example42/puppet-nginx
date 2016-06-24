@@ -430,7 +430,7 @@ class nginx (
   }
 
   # The whole nginx configuration directory can be recursively overriden
-  if $nginx::source_dir {
+  if $nginx::source_dir != '' {
     file { 'nginx.dir':
       ensure  => directory,
       path    => $nginx::config_dir,
@@ -469,7 +469,7 @@ class nginx (
 
 
   ### Include custom class if $my_class is set
-  if $nginx::my_class {
+  if $nginx::my_class != '' {
     include $nginx::my_class
   }
 
