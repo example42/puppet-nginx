@@ -4,6 +4,9 @@
 <% unless @proxy_redirect.nil? || @proxy_redirect.empty? -%>
     proxy_redirect <%= @proxy_redirect %>;
 <% end -%>
+<% unless @proxy_http_version.nil? || @proxy_http_version.empty? -%>
+    proxy_http_version <%= @proxy_http_version %>;
+<% end %>
 <% unless @proxy_set_header.nil? || @proxy_set_header.empty? -%>
 <%  @proxy_set_header.each do |header| -%>
     proxy_set_header        <%= header %>;

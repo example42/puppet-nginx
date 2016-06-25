@@ -56,6 +56,7 @@ define nginx::resource::vhost(
   $proxy               = undef,
   $proxy_read_timeout  = '90',
   $proxy_set_header    = undef,
+  $proxy_http_version  = undef,
   $proxy_redirect      = undef,
   $redirect            = undef,
   $index_files         = ['index.html', 'index.htm', 'index.php'],
@@ -71,7 +72,9 @@ define nginx::resource::vhost(
   $create_www_root     = false,
   $owner               = '',
   $groupowner          = '',
-  $fastcgi             = absent
+  $fastcgi             = absent,
+  $auth_basic          = undef,
+  $auth_basic_user_file = undef
 ) {
 
   File {
@@ -150,6 +153,7 @@ define nginx::resource::vhost(
     proxy_read_timeout => $proxy_read_timeout,
     proxy_set_header   => $proxy_set_header,
     proxy_redirect     => $proxy_redirect,
+    proxy_http_version => $proxy_http_version,
     redirect           => $redirect,
     www_root           => $www_root,
     create_www_root    => $create_www_root,
@@ -159,6 +163,8 @@ define nginx::resource::vhost(
     template_proxy     => $template_proxy,
     template_ssl_proxy => $template_ssl_proxy,
     template_directory => $template_directory,
+    auth_basic         => $auth_basic,
+    auth_basic_user_file => $auth_basic_user_file,
   }
 
   # Use the File Fragment Pattern to construct the configuration files.

@@ -39,6 +39,7 @@ define nginx::resource::location(
   $auth_basic          = undef,
   $www_root           = undef,
   $create_www_root    = false,
+  $alias_path         = undef,
   $owner              = '',
   $groupowner         = '',
   $redirect           = undef,
@@ -47,6 +48,7 @@ define nginx::resource::location(
   $proxy_read_timeout = '90',
   $proxy_set_header   = ['Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'X-Forwarded-Proto $scheme' ],
   $proxy_redirect     = undef,
+  $proxy_http_version = undef,
   $ssl                = false,
   $ssl_only           = false,
   $option             = undef,
@@ -99,21 +101,23 @@ define nginx::resource::location(
   }
 
   ## Check for various error condtiions
+  # Check vhost
   if ($vhost == undef) {
     fail('Cannot create a location reference without attaching to a virtual host')
   }
-  if (($www_root == undef) and ($proxy == undef) and ($redirect == undef)) {
-    fail('Cannot create a location reference without a www_root, proxy or redirect defined')
+  # Check www_root/proxy/redirect/alias_path
+  if (($www_root == undef) and ($proxy == undef) and ($redirect == undef) and ($alias_path == undef)) {
+    fail('Cannot create a location reference without a www_root, proxy, redirect, or alias_path defined')
   }
-  if (($www_root != undef) and ($proxy != undef)) {
-    fail('Cannot define both directory and proxy in a virtual host')
+
+  $mutual_exclusive = [$www_root, $proxy, $redirect, $alias_path]
+
+  # count all values which are not nil/undef - must be 1
+  if (count($mutual_exclusive) != 1) {
+    fail("Cannot define more than one of the following values: www_root: '$www_root', redirect: '$redirect', proxy: '$proxy', and alias_path: '$alias_path'!")
   }
-  if (($www_root != undef) and ($redirect != undef)) {
-    fail('Cannot define both directory and redirect in a virtual host')
-  }
-  if (($proxy != undef) and ($redirect != undef)) {
-    fail('Cannot define both proxy and redirect in a virtual host')
-  }
+
+  # Check auth
   if (($auth_basic_user_file != undef) and ($auth_basic == undef)) {
     fail('Cannot define auth_basic_user_file without auth_basic')
   }
