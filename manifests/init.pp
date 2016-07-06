@@ -449,7 +449,7 @@ class nginx (
   if $nginx::config_file_default_purge {
     $default_site = $::operatingsystem ? {
       /(?i:Debian|Ubuntu|Mint)/              => [ 'default' ],
-      /(?i:Redhat|Centos|Scientific|Fedora)/ => 'default.conf',
+      /(?i:Redhat|Centos|Amazon|Scientific|Fedora)/ => 'default.conf',
     }
 
     file { "${nginx::vdir}/${default_site}":
