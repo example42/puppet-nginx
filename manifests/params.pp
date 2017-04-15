@@ -105,7 +105,7 @@ class nginx::params {
   $source_dir = ''
   $source_dir_purge = false
   $config_file_default_purge = false
-  $template = ''
+  $template = 'nginx/conf.d/nginx.conf.erb'
   $options = ''
   $service_autorestart = true
   $version = 'present'
