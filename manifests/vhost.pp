@@ -37,6 +37,8 @@ define nginx::vhost (
   include nginx
   include nginx::params
 
+  include concat::setup
+
   $real_owner = $owner ? {
     ''      => $nginx::config_file_owner,
     default => $owner,
