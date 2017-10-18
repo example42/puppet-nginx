@@ -6,6 +6,8 @@
 # - The $port to configure the host on
 # - The $docroot provides the Documentation Root variable
 # - The $template option specifies whether to use the default template or override
+# - The $options can be an array or hash variable that the custom
+#   template may use for expanding custom variables
 # - The $priority of the site
 # - The $serveraliases of the site
 #
@@ -26,6 +28,7 @@ define nginx::vhost (
   $docroot,
   $port           = '80',
   $template       = 'nginx/vhost/vhost.conf.erb',
+  $options        = undef,
   $priority       = '50',
   $serveraliases  = '',
   $create_docroot = true,
